@@ -12,7 +12,7 @@ export async function createBooking(formData: FormData) {
 
   // Простенькая валидация
   if (!fullName || !email || !phone || isNaN(tourId))
-    return { error: "Все поля обязательны" };
+    throw new Error("Все поля обязательны");
 
   try {
     await prisma.booking.create({
@@ -24,9 +24,8 @@ export async function createBooking(formData: FormData) {
       },
     });
     revalidatePath(`/tours/${tourId}`);
-    return { success: true };
   } catch (error) {
     console.error("Ошибка бронирования:", error);
-    return { error: "Не удалось отправить заявку" };
+    throw new Error("Не удалось отправить заявку");
   }
 }

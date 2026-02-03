@@ -23,11 +23,6 @@ export default async function TourPage({
 
   if (!tour) return <div className="p-4">Тур не найден</div>;
 
-  /*const handleSubmit = async (formData: FormData) => {
-    "use server";
-    return createBooking(formData);
-  };*/
-
   return (
     <main className="min-h-screen bg-zinc-50 p-6 dark:bg-black">
       {/*Отображение подробной информации о туре*/}
@@ -65,7 +60,7 @@ export default async function TourPage({
 
         <div className="mt-8">
           <h2 className="text-xl font-bold mb-4">Оставить свою заявку</h2>
-          <p>Форма бронирования будет здесь (6 Дней).</p>
+          {/*Заглушка}<p>Форма бронирования будет здесь (6 Дней).</p>{Заглушка*/}
         </div>
       </div>
 

@@ -20,7 +20,7 @@ export default async function HomePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {tours.map((tour) => {
-              console.log("Tour ID:", tour.id, typeof tour.id);
+              // Отладочная информация: console.log("Tour ID:", tour.id, typeof tour.id);
               return (
                 <Card
                   key={tour.id}

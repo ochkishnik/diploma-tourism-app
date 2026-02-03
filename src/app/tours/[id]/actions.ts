@@ -25,7 +25,7 @@ export async function createBooking(formData: FormData) {
     });
     revalidatePath(`/tours/${tourId}`);
   } catch (error) {
-    console.error("Ошибка бронирования:", error);
+    //Отладочная информация: console.error("Ошибка бронирования:", error);
     throw new Error("Не удалось отправить заявку");
   }
 }

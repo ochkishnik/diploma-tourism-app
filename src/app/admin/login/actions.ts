@@ -25,6 +25,7 @@ export async function login(formData: FormData) {
     path: "/admin",
   });
 
+  // Сохранение роли в куки
   (await cookies()).set({
     name: "user_role",
     value: user.role,

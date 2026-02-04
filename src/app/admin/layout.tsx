@@ -1,11 +1,14 @@
 // src/app/admin/layout.tsx
 import Link from "next/link";
+import { getUserRole } from "@/lib/auth";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const role = await getUserRole();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
@@ -21,9 +24,11 @@ export default function AdminLayout({
             <Link href="/admin/bookings" className="text-blue-600 mr-4">
               Заявки
             </Link>
-            <Link href="/admin/users" className="text-blue-600 mr-4">
-              Пользователи
-            </Link>
+            {role === "ADMIN" && (
+              <Link href="/admin/users" className="text-blue-600 mr-4">
+                Пользователи
+              </Link>
+            )}
           </nav>
         </div>
       </header>

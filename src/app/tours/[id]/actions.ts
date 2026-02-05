@@ -4,6 +4,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getBookingDeadline } from "@/lib/booking";
 
 export async function createBooking(formData: FormData) {
   const fullName = formData.get("fullName") as string;
@@ -30,6 +31,7 @@ export async function createBooking(formData: FormData) {
         tourId,
         isGuest,
         userId: null,
+        expiresAt: getBookingDeadline(isGuest),
       },
     });
   } catch (error) {

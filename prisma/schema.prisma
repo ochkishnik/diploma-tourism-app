@@ -53,16 +53,17 @@ model Tour {
 }
 
 model Booking {
-  id       Int           @id @default(autoincrement())
-  fullName String
-  email    String
-  phone    String
-  tourId   Int
-  tour     Tour          @relation(fields: [tourId], references: [id])
-  userId   Int?
-  user     User?         @relation(fields: [userId], references: [id])
-  isGuest  Boolean       @default(true)
-  status   BookingStatus @default(NEW)
-  paid     Boolean       @default(false)
-  createAt DateTime      @default(now())
+  id        Int           @id @default(autoincrement())
+  fullName  String
+  email     String
+  phone     String
+  tourId    Int
+  tour      Tour          @relation(fields: [tourId], references: [id])
+  userId    Int?
+  user      User?         @relation(fields: [userId], references: [id])
+  isGuest   Boolean       @default(true)
+  status    BookingStatus @default(NEW)
+  paid      Boolean       @default(false)
+  createAt  DateTime      @default(now())
+  expiresAt DateTime
 }

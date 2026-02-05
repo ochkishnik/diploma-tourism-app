@@ -1,7 +1,7 @@
 // src/app/admin/bookings/page.tsx
 import { prisma } from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
-import { cancelBooking, confirmPayment } from "./actions";
+import { cancelBooking, cleanupBookings, confirmPayment } from "./actions";
 
 export default async function BookingsAdminPage() {
   const role = await getUserRole();
@@ -39,7 +39,14 @@ export default async function BookingsAdminPage() {
     <div>
       <h2 className="text-2xl font-bold mb-4">Заявки на бронирование</h2>
       <p className="mb-4">Всего заявок: {bookings.length}</p>
-
+      <form action={cleanupBookings} className="mb-4">
+        <button
+          type="submit"
+          className="bg-reb-600 text-white px-3 py-1 rounded-2xl hover:bg-red-700 text-sm"
+        >
+          Удалить просроченные заявки
+        </button>
+      </form>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border">
           <thead>
@@ -50,6 +57,7 @@ export default async function BookingsAdminPage() {
               <th className="border px-4 py-2">Телефон</th>
               <th className="border px-4 py-2">Тур</th>
               <th className="border px-4 py-2">Дата</th>
+              <th className="border px-4 py-2">Действует до</th>
               <th className="border px-4 py-2">Тип</th>
               <th className="border px-4 py-2">Оплата</th>
               <th className="border px-4 py-2">Статус</th>
@@ -68,6 +76,9 @@ export default async function BookingsAdminPage() {
                 </td>
                 <td className="border px-4 py-2">
                   {new Date(booking.createAt).toLocaleDateString()}
+                </td>
+                <td className="border px-4 py-2">
+                  {new Date(booking.expiresAt).toLocaleDateString()}
                 </td>
                 <td className="border px-4 py-2">
                   {booking.isGuest ? (
@@ -100,22 +111,24 @@ export default async function BookingsAdminPage() {
                 </td>
                 <td className="border px-4 py-2 text-center">
                   {booking.status !== "CANCELLED" ? (
-                    <form action={cancelBooking} className="inline">
-                      <input
-                        type="hidden"
-                        name="bookingId"
-                        value={booking.id}
-                      />
-                      <button
-                        type="submit"
-                        className="text-red-600 bg-red-100 hover:underline border px-1 mb-1 rounded-2xl"
-                      >
-                        Отменить
-                      </button>
+                    <div className="inline">
+                      <form action={cancelBooking}>
+                        <input
+                          type="hidden"
+                          name="bookingId"
+                          value={booking.id}
+                        />
+                        <button
+                          type="submit"
+                          className="text-red-600 bg-red-100 hover:underline border px-1 mb-1 rounded-2xl"
+                        >
+                          Отменить
+                        </button>
+                      </form>
 
                       {/* Подтверждение отлаты - только если не оплачено */}
                       {!booking.paid && (
-                        <form action={confirmPayment} className="inline">
+                        <form action={confirmPayment}>
                           <input
                             type="hidden"
                             name="bookingId"
@@ -130,7 +143,7 @@ export default async function BookingsAdminPage() {
                           </button>
                         </form>
                       )}
-                    </form>
+                    </div>
                   ) : (
                     <span className="text-gray-500">-</span>
                   )}

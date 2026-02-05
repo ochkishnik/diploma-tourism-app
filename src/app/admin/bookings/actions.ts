@@ -20,7 +20,20 @@ export async function confirmPayment(formData: FormData) {
 
   await prisma.booking.update({
     where: { id: bookingId },
-    data: { paid: true },
+    data: { paid: true, status: "CONFIRMED" },
+  });
+  revalidatePath("/admin/bookings");
+}
+
+export async function cleanupBookings() {
+  const now = new Date();
+
+  await prisma.booking.deleteMany({
+    where: {
+      expiresAt: { lt: now },
+      paid: false,
+      status: "NEW",
+    },
   });
   revalidatePath("/admin/bookings");
 }

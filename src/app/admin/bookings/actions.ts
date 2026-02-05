@@ -14,3 +14,13 @@ export async function cancelBooking(formData: FormData) {
 
   revalidatePath("/admin/bookings");
 }
+
+export async function confirmPayment(formData: FormData) {
+  const bookingId = Number(formData.get("bookingId"));
+
+  await prisma.booking.update({
+    where: { id: bookingId },
+    data: { paid: true },
+  });
+  revalidatePath("/admin/bookings");
+}

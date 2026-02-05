@@ -87,6 +87,17 @@ export function BookingSection({
               Забронировать тур
             </Button>
           </form>
+
+          {/*Ссылка на реквизиты*/}
+          <div className="mt-4 text-sm text-gray-600 text-center">
+            ● Оплата возможна и{" "}
+            <a
+              href="/payment-info"
+              className="text-blue-600 underline hover:text-blue-800"
+            >
+              по банковским реквизитам
+            </a>
+          </div>
         </CardContent>
       </Card>
     </div>

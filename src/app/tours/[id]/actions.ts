@@ -15,6 +15,12 @@ export async function createBooking(formData: FormData) {
   if (!fullName || !email || !phone || isNaN(tourId))
     throw new Error("Все поля обязательны");
 
+  /*
+   * Проверка, есть ли авторизованный пользователь (пока что такими являются только админы)
+   * В качестве заглушки пока так, но в скором времени будет обычная авторизация
+   */
+  const isGuest = true;
+
   try {
     await prisma.booking.create({
       data: {
@@ -22,7 +28,7 @@ export async function createBooking(formData: FormData) {
         email,
         phone,
         tourId,
-        isGuest: true,
+        isGuest,
         userId: null,
       },
     });

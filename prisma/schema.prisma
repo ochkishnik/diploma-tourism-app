@@ -20,6 +20,12 @@ enum Role {
   ADMIN
 }
 
+enum BookingStatus {
+  NEW
+  CONFIRMED
+  CANCELLED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -47,13 +53,16 @@ model Tour {
 }
 
 model Booking {
-  id       Int      @id @default(autoincrement())
+  id       Int           @id @default(autoincrement())
   fullName String
   email    String
   phone    String
   tourId   Int
-  createAt DateTime @default(now())
-  tour     Tour     @relation(fields: [tourId], references: [id])
+  tour     Tour          @relation(fields: [tourId], references: [id])
   userId   Int?
-  user     User?    @relation(fields: [userId], references: [id])
+  user     User?         @relation(fields: [userId], references: [id])
+  isGuest  Boolean       @default(true)
+  status   BookingStatus @default(NEW)
+  paid     Boolean       @default(false)
+  createAt DateTime      @default(now())
 }

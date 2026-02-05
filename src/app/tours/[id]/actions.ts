@@ -3,6 +3,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function createBooking(formData: FormData) {
   const fullName = formData.get("fullName") as string;
@@ -21,11 +22,21 @@ export async function createBooking(formData: FormData) {
         email,
         phone,
         tourId,
+        isGuest: true,
+        userId: null,
       },
     });
-    revalidatePath(`/tours/${tourId}`);
   } catch (error) {
-    //Отладочная информация: console.error("Ошибка бронирования:", error);
+    {
+      /*Отладочная информация: console.error("Ошибка бронирования:", error);*/
+    }
     throw new Error("Не удалось отправить заявку");
   }
+  /*
+   * The revalidatePath and redirect functions were removed
+   * from the try catch system,
+   * as it caught Error: NEXT_REDIRECT exceptions.
+   */
+  revalidatePath(`/tours/${tourId}`);
+  redirect(`/tours/${tourId}?success=1`);
 }

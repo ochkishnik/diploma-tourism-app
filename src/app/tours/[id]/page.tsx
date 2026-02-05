@@ -1,16 +1,17 @@
 //src/app/tours/[id]/page.tsx
 import { prisma } from "@/lib/prisma";
-import { createBooking } from "./actions";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BookingSection } from "./BookingSection";
 
 export default async function TourPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ success?: string }>;
 }) {
   // params - это Promise! Стас, его нужно await'ить
   const { id: idStr } = await params;
+  const sp = await searchParams;
 
   // Проверяем, что id - это число
   if (!/^\d+$/.test(idStr))
@@ -58,74 +59,8 @@ export default async function TourPage({
           </div>
         </div>
 
-        <div className="mt-8">
-          <h2 className="text-xl font-bold mb-4">Оставить свою заявку</h2>
-          {/*Заглушка}<p>Форма бронирования будет здесь (6 Дней).</p>{Заглушка*/}
-        </div>
-      </div>
-
-      {/*Форма бронирования*/}
-      <div className="mt-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Оставить заявку</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form action={createBooking} className="space-y-4">
-              <input type="hidden" name="tourId" value={tour.id} />
-
-              <div>
-                <label
-                  htmlFor="fullName"
-                  className="block text-sm font-medium mb-1"
-                >
-                  ФИО
-                </label>
-                <input
-                  id="fullName"
-                  name="fullName"
-                  required
-                  className="w-full px-3 py-2 border rounded-md"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium mb-1"
-                >
-                  Email
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  className="w-full px-3 py-2 border rounded-md"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="phone"
-                  className="block text-sm font-medium mb-1"
-                >
-                  Телефон
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  required
-                  className="w-full px-3 py-2 border rounded-md"
-                />
-              </div>
-
-              <Button type="submit" className="w-full">
-                Забронировать тур
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+        {/* Клиенская секция с формой и сообщением */}
+        <BookingSection tourId={tour.id} success={sp.success === "1"} />
       </div>
     </main>
   );

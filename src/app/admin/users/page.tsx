@@ -1,8 +1,10 @@
 // src/app/admin/users/page.tsx
 import { prisma } from "@/lib/prisma";
 import { getUserRole } from "@/lib/auth";
+import { ToggleRoleButton } from "./ToggleRoleButton";
+import { DeleteUserButton } from "./DeleteUserButton";
 
-export default async function UserAdminPage() {
+export default async function UsersAdminPage() {
   const role = await getUserRole();
 
   // Доступ только для пользователя с ролью ADMIN
@@ -15,14 +17,14 @@ export default async function UserAdminPage() {
     );
   }
 
-  const user = await prisma.user.findMany({
+  const users = await prisma.user.findMany({
     orderBy: { createdAt: "desc" },
   });
 
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Управление пользователями</h2>
-      <p className="mb-4">Всего пользователей: {user.length}</p>
+      <p className="mb-4">Всего пользователей: {users.length}</p>
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border">
@@ -36,7 +38,7 @@ export default async function UserAdminPage() {
             </tr>
           </thead>
           <tbody>
-            {user.map((user) => (
+            {users.map((user) => (
               <tr key={user.id} className="hover:bg-gray-50">
                 <td className="border px-4 py-2">{user.id}</td>
                 <td className="border px-4 py-2">{user.email}</td>
@@ -56,13 +58,16 @@ export default async function UserAdminPage() {
                 <td className="border px-4 py-2">
                   {new Date(user.createdAt).toLocaleDateString()}
                 </td>
-                <td className="border px-4 py-2 space-x-4">
-                  <button className="text-blue-600 hover:underline">
-                    Изменить роль
-                  </button>
-                  <button className="text-red-600 hover:underline">
-                    Удалить
-                  </button>
+                <td className="border px-4 py-2  text-center">
+                  {user.role !== "ADMIN" && (
+                    <ToggleRoleButton
+                      userId={user.id}
+                      currentRole={user.role}
+                    />
+                  )}
+                  {user.role !== "ADMIN" && (
+                    <DeleteUserButton userId={user.id} />
+                  )}
                 </td>
               </tr>
             ))}

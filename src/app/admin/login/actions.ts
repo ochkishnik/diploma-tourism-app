@@ -15,8 +15,10 @@ export async function login(formData: FormData) {
   if (!user || user.password !== password)
     redirect("/admin/login?error=invalid");
 
-  // Установка защищенного куки
-  (await cookies()).set({
+  const cookieStore = await cookies();
+
+  // Основная авторизация. Установка защищенного куки
+  cookieStore.set({
     name: "admin_auth",
     value: "granted",
     httpOnly: true,
@@ -26,12 +28,22 @@ export async function login(formData: FormData) {
   });
 
   // Сохранение роли в куки
-  (await cookies()).set({
+  cookieStore.set({
     name: "user_role",
     value: user.role,
     httpOnly: true,
     maxAge: 3600,
     path: "/admin",
   });
+
+  // Сохранение в куки Id пользователя
+  cookieStore.set({
+    name: "user_id",
+    value: user.id.toString(),
+    httpOnly: true,
+    maxAge: 3600,
+    path: "/admin",
+  });
+
   redirect("/admin");
 }

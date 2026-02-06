@@ -26,7 +26,7 @@ export default function RegisterPage() {
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-2xl hover:bg-blue-70"
+            className="w-full bg-blue-600 text-white py-2 rounded-2xl hover:bg-blue-700"
           >
             Зарегистрироваться
           </button>

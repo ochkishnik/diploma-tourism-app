@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getBookingDeadline } from "@/lib/booking";
+import { getCurrentUserId } from "@/lib/auth";
 
 export async function createBooking(formData: FormData) {
   const fullName = formData.get("fullName") as string;
@@ -16,11 +17,15 @@ export async function createBooking(formData: FormData) {
   if (!fullName || !email || !phone || isNaN(tourId))
     throw new Error("Все поля обязательны");
 
-  /*
-   * Проверка, есть ли авторизованный пользователь (пока что такими являются только админы)
-   * В качестве заглушки пока так, но в скором времени будет обычная авторизация
-   */
-  const isGuest = true;
+  // Проверка авторизован ли пользователь
+  const currentUserId = await getCurrentUserId();
+  const isGuest = currentUserId === null;
+
+  // Если пользователь авторизован - используем его id, игнорируя emeil из формы!
+  let userId: number | null = null;
+  if (!isGuest) {
+    userId = currentUserId;
+  }
 
   try {
     await prisma.booking.create({
@@ -30,8 +35,9 @@ export async function createBooking(formData: FormData) {
         phone,
         tourId,
         isGuest,
-        userId: null,
+        userId,
         expiresAt: getBookingDeadline(isGuest),
+        status: "NEW",
       },
     });
   } catch (error) {

@@ -9,16 +9,12 @@ export async function toggleUserRole(formData: FormData) {
   const currentUserId = await getCurrentUserId();
   const currentRole = await getUserRole();
 
-  console.log("targetUserId:", targetUserId);
-  console.log("currentUserId :", currentUserId);
-  console.log("currentRole :", currentRole);
   // Проверки безопасности
   if (currentRole !== "ADMIN") throw new Error("Недостаточно прав!");
   if (targetUserId === currentUserId)
     throw new Error("Нельзя изменить свою роль!");
 
   const user = await prisma.user.findUnique({ where: { id: targetUserId } });
-  console.log("user  :", user);
   if (!user || user.role === "ADMIN") throw new Error("Недопустимая операция");
 
   // Пеперключение роли

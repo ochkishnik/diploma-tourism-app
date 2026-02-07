@@ -1,6 +1,7 @@
 //src/app/tours/[id]/page.tsx
 import { prisma } from "@/lib/prisma";
 import { BookingSection } from "./BookingSection";
+import { getUserRole } from "@/lib/auth";
 
 export default async function TourPage({
   params,
@@ -9,9 +10,9 @@ export default async function TourPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ success?: string }>;
 }) {
-  // params - это Promise! Стас, его нужно await'ить
   const { id: idStr } = await params;
   const sp = await searchParams;
+  const userRole = await getUserRole();
 
   // Проверяем, что id - это число
   if (!/^\d+$/.test(idStr))
@@ -60,7 +61,11 @@ export default async function TourPage({
         </div>
 
         {/* Клиенская секция с формой и сообщением */}
-        <BookingSection tourId={tour.id} success={sp.success === "1"} />
+        <BookingSection
+          tourId={tour.id}
+          success={sp.success === "1"}
+          userRole={userRole}
+        />
       </div>
     </main>
   );

@@ -7,16 +7,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export function BookingSection({
   tourId,
   success,
+  userRole,
 }: {
   tourId: number;
   success: boolean;
+  userRole: string | null | undefined;
 }) {
+  const isStaff = userRole === "ADMIN" || userRole === "MANAGER";
   return (
     <div className="mt-8">
       <h2 className="text-xl font-bold mb-4">Оставить свою заявку</h2>
       <Card>
         <CardHeader>
-          <CardTitle>Оставить заявку</CardTitle>
+          <CardTitle>
+            Оставить заявку
+            {isStaff && (
+              <p className="italic text-sm text-yellow-700 mt-3">
+                Примечание: Этот функционал предназначен для обычных
+                пользователей и гостей. Чтобы забронировать тур, войдите как
+                клиент или используйте гостевой режим.
+              </p>
+            )}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {/* Сообщение об успехе */}
@@ -55,6 +67,7 @@ export function BookingSection({
                 name="fullName"
                 required
                 className="w-full px-3 py-2 border rounded-md"
+                disabled={isStaff}
               />
             </div>
 
@@ -68,6 +81,7 @@ export function BookingSection({
                 type="email"
                 required
                 className="w-full px-3 py-2 border rounded-md"
+                disabled={isStaff}
               />
             </div>
 
@@ -80,10 +94,11 @@ export function BookingSection({
                 name="phone"
                 required
                 className="w-full px-3 py-2 border rounded-md"
+                disabled={isStaff}
               />
             </div>
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isStaff}>
               Забронировать тур
             </Button>
           </form>

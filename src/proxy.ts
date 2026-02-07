@@ -6,8 +6,8 @@ export function proxy(request: NextRequest) {
 
   //Защищаем все маршруты /admin/*, кроме /admin/login
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-    const authCookie = request.cookies.get("admin_auth")?.value;
-    if (authCookie !== "granted")
+    const roleCookie = request.cookies.get("user_role")?.value;
+    if (roleCookie !== "ADMIN" && roleCookie !== "MANAGER")
       return NextResponse.redirect(new URL("/admin/login", request.url));
   }
   return NextResponse.next();

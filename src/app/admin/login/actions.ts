@@ -17,23 +17,13 @@ export async function login(formData: FormData) {
 
   const cookieStore = await cookies();
 
-  // Основная авторизация. Установка защищенного куки
-  cookieStore.set({
-    name: "admin_auth",
-    value: "granted",
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 3600,
-    path: "/admin",
-  });
-
   // Сохранение роли в куки
   cookieStore.set({
     name: "user_role",
     value: user.role,
     httpOnly: true,
     maxAge: 3600,
-    path: "/admin",
+    path: "/",
   });
 
   // Сохранение в куки Id пользователя
@@ -42,7 +32,7 @@ export async function login(formData: FormData) {
     value: user.id.toString(),
     httpOnly: true,
     maxAge: 3600,
-    path: "/admin",
+    path: "/",
   });
 
   redirect("/admin");

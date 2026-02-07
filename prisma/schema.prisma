@@ -64,6 +64,6 @@ model Booking {
   isGuest   Boolean       @default(true)
   status    BookingStatus @default(NEW)
   paid      Boolean       @default(false)
-  createAt  DateTime      @default(now())
+  createdAt DateTime      @default(now())
   expiresAt DateTime
 }

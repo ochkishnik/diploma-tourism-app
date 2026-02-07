@@ -18,7 +18,7 @@ export default async function BookingsAdminPage() {
 
   const bookings = await prisma.booking.findMany({
     include: { tour: true },
-    orderBy: { createAt: "desc" },
+    orderBy: { createdAt: "desc" },
   });
 
   // Функция для получения цвета статуса
@@ -42,7 +42,7 @@ export default async function BookingsAdminPage() {
       <form action={cleanupBookings} className="mb-4">
         <button
           type="submit"
-          className="bg-reb-600 text-white px-3 py-1 rounded-2xl hover:bg-red-700 text-sm"
+          className="bg-red-600 text-white px-3 py-1 rounded-2xl hover:bg-red-700 text-sm"
         >
           Удалить просроченные заявки
         </button>
@@ -75,7 +75,7 @@ export default async function BookingsAdminPage() {
                   {booking.tour ? booking.tour.title : "-"}
                 </td>
                 <td className="border px-4 py-2">
-                  {new Date(booking.createAt).toLocaleDateString()}
+                  {new Date(booking.createdAt).toLocaleDateString()}
                 </td>
                 <td className="border px-4 py-2">
                   {new Date(booking.expiresAt).toLocaleDateString()}

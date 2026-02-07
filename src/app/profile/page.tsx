@@ -14,7 +14,7 @@ export default async function ProfilePage() {
   const bookings = await prisma.booking.findMany({
     where: { userId },
     include: { tour: true },
-    orderBy: { createAt: "desc" },
+    orderBy: { createdAt: "desc" },
   });
 
   return (
@@ -50,7 +50,7 @@ export default async function ProfilePage() {
                 {booking.tour.price.toLocaleString()} руб.
               </p>
               <p className="text-sm mt-2">
-                Дата бронирования: {booking.createAt.toLocaleDateString()}
+                Дата бронирования: {booking.createdAt.toLocaleDateString()}
                 {booking.expiresAt && (
                   <> | Истекает: {booking.expiresAt.toLocaleDateString()}</>
                 )}
@@ -62,7 +62,7 @@ export default async function ProfilePage() {
                   <input type="hidden" name="bookingId" value={booking.id} />
                   <button
                     type="submit"
-                    className="text-red-600 hover:text-red-700 border rounded-2xltext-sm bg-red-100"
+                    className="text-red-600 hover:text-red-700 border rounded-2xl text-sm bg-red-100"
                   >
                     Отменить заявку
                   </button>

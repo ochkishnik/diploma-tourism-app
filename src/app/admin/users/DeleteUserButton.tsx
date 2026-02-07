@@ -1,3 +1,4 @@
+// src/app/admin/users/DeleteUserButton.tsx
 "use client";
 import { deleteUser } from "./actions";
 

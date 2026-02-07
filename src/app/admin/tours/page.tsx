@@ -27,6 +27,14 @@ export default async function ToursAdminPage({
   if (editTourId)
     editTour = await prisma.tour.findUnique({ where: { id: editTourId } });
 
+  // Безопасно вычисляем даты по умолчанию до рендера
+  const today = new Date();
+  const nextWeek = new Date(today);
+  nextWeek.setDate(today.getDate() + 7);
+
+  const todayStr = today.toISOString().split("T")[0];
+  const nextWeekStr = nextWeek.toISOString().split("T")[0];
+
   const tours = await prisma.tour.findMany({
     orderBy: { createdAt: "desc" },
     take: 9 /* Добавление ограничения */,
@@ -53,7 +61,12 @@ export default async function ToursAdminPage({
                 {tour.price.toLocaleString()} руб.
               </span>
             </div>
-            <div className="mt-2 flex space-x-2">
+            <div className="text-sm items-center mt-1 mb-3">
+              Начало тура: {tour.startDate.toLocaleDateString()}
+              <br />
+              Конец тура: {tour.endDate.toLocaleDateString()}
+            </div>
+            <div className="mt-2 flex space-x-2 items-center">
               <a
                 href={`/admin/tours?edit=${tour.id}`}
                 className="text-blue-600 hover:underline text-sm"
@@ -109,6 +122,35 @@ export default async function ToursAdminPage({
             defaultValue={editTour?.price?.toString() || ""}
             className="w-full px-2 py-1 border rounded-2xl"
           />
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Дата начала
+              </label>
+              <input
+                name="startDate"
+                type="date"
+                defaultValue={
+                  editTour?.startDate.toISOString().split("T")[0] || todayStr
+                }
+                className="w-full px-2 py-1 border rounded-2xl"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Дата окончания
+              </label>
+              <input
+                name="endDate"
+                type="date"
+                defaultValue={
+                  editTour?.endDate.toISOString().split("T")[0] || nextWeekStr
+                }
+                className="w-full px-2 py-1 border rounded-2xl"
+              />
+            </div>
+          </div>
           <div className="flex gap-2">
             <button
               type="submit"

@@ -18,6 +18,8 @@ export async function createTour(formData: FormData) {
   const description = formData.get("description") as string;
   const country = formData.get("country") as string;
   const price = Number(formData.get("price"));
+  const startDate = new Date(formData.get("startDate") as string);
+  const endDate = new Date(formData.get("endDate") as string);
 
   // Простенькая валидация
   if (!title || !description || !country || isNaN(price) || price <= 0)
@@ -25,9 +27,14 @@ export async function createTour(formData: FormData) {
       "Все поля обязательны для заполнения, и цена должна быть положительной",
     );
 
-  // Устанавливаем временные значения даты начала и конца тура
-  const startDate = new Date("2026-06-01");
-  const endDate = new Date("2026-06-08");
+  if (
+    isNaN(startDate.getTime()) ||
+    isNaN(endDate.getTime()) ||
+    startDate >= endDate
+  )
+    throw new Error(
+      "Некорректные даты: дата окончания должна быть позже даты начала",
+    );
 
   await prisma.tour.create({
     data: {
@@ -49,10 +56,21 @@ export async function updateTour(formData: FormData) {
   const description = formData.get("description") as string;
   const country = formData.get("country") as string;
   const price = Number(formData.get("price"));
+  const startDate = new Date(formData.get("startDate") as string);
+  const endDate = new Date(formData.get("endDate") as string);
 
   if (!title || !description || !country || isNaN(price) || price <= 0)
     throw new Error(
       "Все поля обязательны для заполнения, и цена должна быть положительной",
+    );
+
+  if (
+    isNaN(startDate.getTime()) ||
+    isNaN(endDate.getTime()) ||
+    startDate >= endDate
+  )
+    throw new Error(
+      "Некорректные даты: дата окончания должна быть позже даты начала",
     );
 
   await prisma.tour.update({
@@ -62,6 +80,8 @@ export async function updateTour(formData: FormData) {
       description,
       country,
       price,
+      startDate,
+      endDate,
     },
   });
   revalidatePath("/admin/tours");

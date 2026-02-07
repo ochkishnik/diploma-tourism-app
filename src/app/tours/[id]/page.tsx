@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { BookingSection } from "./BookingSection";
 import { getUserRole } from "@/lib/auth";
+import Link from "next/link";
 
 export default async function TourPage({
   params,
@@ -27,6 +28,13 @@ export default async function TourPage({
 
   return (
     <main className="min-h-screen bg-zinc-50 p-6 dark:bg-black">
+      <nav className="max-w-4xl mx-auto mb-6 text-sm text-gray-500">
+        <Link href="/" className="hover:underline text-blue-600">
+          Главная
+        </Link>
+        <span className="mx-2">›</span>
+        <span className="text-gray-900 dark:text-white">{tour.title}</span>
+      </nav>
       {/*Отображение подробной информации о туре*/}
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-4">{tour.title}</h1>

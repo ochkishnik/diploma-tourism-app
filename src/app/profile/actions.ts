@@ -26,3 +26,30 @@ export async function cancelBooking(formData: FormData) {
 
   revalidatePath("/profile");
 }
+
+export async function simulatePayment(formData: FormData) {
+  const bookingId = Number(formData.get("bookingId"));
+  const userId = await getCurrentUserId();
+
+  // Проверка на ваторизованного пользователя
+  if (!userId) throw new Error("Требуется авторизация");
+
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: { tour: true },
+  });
+
+  // проверка принадлежности заявки пользователю
+  if (!booking || booking.userId !== userId)
+    throw new Error("Заявка не найдена");
+
+  if (booking.paid) throw new Error("Тур уже оплачен");
+
+  // Имитируем оплату, установив paid в true и статус CONFIRMED
+  await prisma.booking.update({
+    where: { id: bookingId },
+    data: { paid: true, status: "CONFIRMED" },
+  });
+
+  revalidatePath("/profile");
+}

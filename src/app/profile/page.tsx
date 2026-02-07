@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { getUserRole, getCurrentUserId } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { cancelBooking } from "./actions";
+import { cancelBooking, simulatePayment } from "./actions";
 
 export default async function ProfilePage() {
   const role = await getUserRole();
@@ -49,25 +49,59 @@ export default async function ProfilePage() {
                 Страна: {booking.tour.country} | Цена:{" "}
                 {booking.tour.price.toLocaleString()} руб.
               </p>
-              <p className="text-sm mt-2">
-                Дата бронирования: {booking.createdAt.toLocaleDateString()}
-                {booking.expiresAt && (
-                  <> | Истекает: {booking.expiresAt.toLocaleDateString()}</>
-                )}
-              </p>
+              {booking.status !== "CANCELLED" && (
+                <div className="text-sm">
+                  {/*Дата начала и окончания тура*/}
+                  {booking.tour && (
+                    <p className="mt-1">
+                      Даты тура: {booking.tour.startDate.toLocaleDateString()} -{" "}
+                      {booking.tour.endDate.toLocaleDateString()}
+                    </p>
+                  )}
 
-              {/* Кнопка отмены - только для новых заявок*/}
-              {booking.status === "NEW" && (
-                <form action={cancelBooking} className="mt-3">
-                  <input type="hidden" name="bookingId" value={booking.id} />
-                  <button
-                    type="submit"
-                    className="text-red-600 hover:text-red-700 border rounded-2xl text-sm bg-red-100"
-                  >
-                    Отменить заявку
-                  </button>
-                </form>
+                  {/*Дата бронирования - выводится всегда*/}
+                  <p className="text-gray-600">
+                    Дата бронирования: {booking.createdAt.toLocaleDateString()}
+                  </p>
+                  {/*Срок бронирования - только если не оплачено*/}
+                  {!booking.paid && booking.expiresAt && (
+                    <p className="text-gray-500">
+                      Бронь действует до:{" "}
+                      {booking.expiresAt.toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
               )}
+              {/*Блок с кнопками*/}
+              <div className="mt-3 flex gap-2">
+                {/*Кнопка оплаты - только для неоплаченных и неотмененных*/}
+                {!booking.paid && booking.status === "NEW" && (
+                  <form action={simulatePayment}>
+                    <input type="hidden" name="bookingId" value={booking.id} />
+                    <button
+                      type="submit"
+                      title="Имитация онлайн-оплаты. В реальном сервисе здесь был бы платёжный шлюз."
+                      className="bg-green-600 text-white px-3 py-1 rounded-2xl hover:bg-green-700 text-sm"
+                    >
+                      Оплатить тур
+                    </button>
+                  </form>
+                )}
+
+                {/* Кнопка отмены - только для новых заявок*/}
+                {booking.status === "NEW" && !booking.paid && (
+                  <form action={cancelBooking}>
+                    <input type="hidden" name="bookingId" value={booking.id} />
+
+                    <button
+                      type="submit"
+                      className="text-red-600 hover:underline border rounded-2xl px-3 py-1 text-sm bg-red-100"
+                    >
+                      Отменить заявку
+                    </button>
+                  </form>
+                )}
+              </div>
             </div>
           ))}
         </div>
